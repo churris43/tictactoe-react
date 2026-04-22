@@ -19,12 +19,19 @@ export default function Game() {
   }
 
   const moves = history.map((squares, move) => {
+    let nextMove = move + 1;
     let description;
     description = move > 0 ? "Go to move #" + move : "Go to Game start";
+    let lastLine =
+      move === history.length - 1 ? "You are on move #" + nextMove : "";
+    console.log(lastLine);
     return (
-      <li key={move}>
-        <button onClick={() => jumpTo(move)}>{description}</button>
-      </li>
+      <>
+        <li key={move}>
+          <button onClick={() => jumpTo(move)}>{description}</button>
+        </li>
+        <span>{lastLine} </span>
+      </>
     );
   });
 
