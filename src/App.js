@@ -8,10 +8,10 @@ function Square({ value, onSquareClick }) {
   );
 }
 
-function Step() {
+function Step({ move, onButtonClick }) {
   return (
     <>
-      <button>Hello</button>
+      <button onClick={onButtonClick}>Move {move}</button>
     </>
   );
 }
@@ -26,7 +26,12 @@ export default function Board() {
       return;
     }
     const nextSquares = squares.slice();
+
     const nextHistory = history.slice();
+    nextHistory.push(nextSquares);
+    setHistory(nextHistory);
+    console.log(nextHistory);
+
     if (xIsNext) {
       nextSquares[i] = "X";
     } else {
@@ -34,6 +39,10 @@ export default function Board() {
     }
     setSquares(nextSquares);
     setXIsNext(!xIsNext);
+  }
+
+  function handleHistoryClick(i) {
+    setSquares(history[i]);
   }
 
   const winner = calculateWinner(squares);
@@ -63,7 +72,14 @@ export default function Board() {
         <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
       </div>
       <div>
-        <Step />
+        {history.map((squares, i) => (
+          <Step
+            move={i}
+            onButtonClick={() => {
+              handleHistoryClick(i);
+            }}
+          />
+        ))}
       </div>
     </>
   );
