@@ -19,20 +19,21 @@ export default function Game() {
   }
 
   const moves = history.map((squares, move) => {
-    let nextMove = move + 1;
     let description;
     description = move > 0 ? "Go to move #" + move : "Go to Game start";
-    let lastLine =
-      move === history.length - 1 ? "You are on move #" + nextMove : "";
-    console.log(lastLine);
-    return (
-      <>
-        <li key={move}>
-          <button onClick={() => jumpTo(move)}>{description}</button>
-        </li>
-        <span>{lastLine} </span>
-      </>
-    );
+    console.log("Move: " + move);
+    console.log("Current: " + currentMove);
+    if (move === currentMove) {
+      return <span> You are in move {currentMove}</span>;
+    } else {
+      return (
+        <>
+          <li key={move}>
+            <button onClick={() => jumpTo(move)}>{description}</button>
+          </li>
+        </>
+      );
+    }
   });
 
   function handlePlay(nextSquares) {
