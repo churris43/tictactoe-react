@@ -8,15 +8,25 @@ function Square({ value, onSquareClick }) {
   );
 }
 
+function Step() {
+  return (
+    <>
+      <button>Hello</button>
+    </>
+  );
+}
+
 export default function Board() {
   const [xIsNext, setXIsNext] = useState(true);
   const [squares, setSquares] = useState(Array(9).fill(null));
+  const [history, setHistory] = useState([squares]);
 
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
     const nextSquares = squares.slice();
+    const nextHistory = history.slice();
     if (xIsNext) {
       nextSquares[i] = "X";
     } else {
@@ -52,6 +62,9 @@ export default function Board() {
         <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
         <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
       </div>
+      <div>
+        <Step />
+      </div>
     </>
   );
 }
@@ -69,6 +82,7 @@ function calculateWinner(squares) {
   ];
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
+    // check if all three squares in a winning line are filled with the same value
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
       return squares[a];
     }
