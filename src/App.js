@@ -8,41 +8,56 @@ function Square({ value, onSquareClick }) {
   );
 }
 
-function Step({ move, onButtonClick }) {
+export default function Game() {
+  const [history, setHistory] = useState([Array(9).fill(null)]);
+  const [currentMove, setCurrentMove] = useState(0);
+  const xIsNext = currentMove % 2 === 0;
+  const currentSquares = history[currentMove];
+
+  function jumpTo(nextMove) {
+    setCurrentMove(nextMove);
+  }
+
+  const moves = history.map((squares, move) => {
+    let description;
+    description = move > 0 ? "Go to move #" + move : "Go to Game start";
+    return (
+      <li key={move}>
+        <button onClick={() => jumpTo(move)}>{description}</button>
+      </li>
+    );
+  });
+
+  function handlePlay(nextSquares) {
+    const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
+    setHistory(nextHistory);
+    setCurrentMove(nextHistory.length - 1);
+  }
+
   return (
-    <>
-      <button onClick={onButtonClick}>Move {move}</button>
-    </>
+    <div className="game">
+      <div className="game-board">
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+      </div>
+      <div className="game-info">
+        <ol>{moves}</ol>
+      </div>
+    </div>
   );
 }
 
-export default function Board() {
-  const [xIsNext, setXIsNext] = useState(true);
-  const [squares, setSquares] = useState(Array(9).fill(null));
-  const [history, setHistory] = useState([squares]);
-
+function Board({ xIsNext, squares, onPlay }) {
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
     const nextSquares = squares.slice();
-
-    const nextHistory = history.slice();
-    nextHistory.push(nextSquares);
-    setHistory(nextHistory);
-    console.log(nextHistory);
-
     if (xIsNext) {
       nextSquares[i] = "X";
     } else {
       nextSquares[i] = "O";
     }
-    setSquares(nextSquares);
-    setXIsNext(!xIsNext);
-  }
-
-  function handleHistoryClick(i) {
-    setSquares(history[i]);
+    onPlay(nextSquares);
   }
 
   const winner = calculateWinner(squares);
@@ -71,16 +86,6 @@ export default function Board() {
         <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
         <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
       </div>
-      <div>
-        {history.map((squares, i) => (
-          <Step
-            move={i}
-            onButtonClick={() => {
-              handleHistoryClick(i);
-            }}
-          />
-        ))}
-      </div>
     </>
   );
 }
@@ -98,7 +103,6 @@ function calculateWinner(squares) {
   ];
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
-    // check if all three squares in a winning line are filled with the same value
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
       return squares[a];
     }
