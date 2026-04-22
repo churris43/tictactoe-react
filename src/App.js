@@ -71,6 +71,8 @@ function Board({ xIsNext, squares, onPlay }) {
   let status;
   if (winner) {
     status = "Winner: " + winner;
+  } else if (squares.filter((v) => v !== null).length === 9) {
+    status = "This is a draw";
   } else {
     status = "Next player: " + (xIsNext ? "X" : "O");
   }
